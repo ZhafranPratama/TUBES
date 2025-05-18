@@ -40,7 +40,8 @@ func menu() {
 	fmt.Println("5. Rekomendasi workout")
 	fmt.Println("6. Cari workout berdasarkan jenis")
 	fmt.Println("7. Cari workout berdasarkan tanggal")
-	fmt.Println("8. Exit")
+	fmt.Println("8. Urutkan berdasarkan jumlah kalori")
+	fmt.Println("9. Exit")
 	fmt.Print("Pilih menu 1/2/3/4/5...: ")
 	fmt.Scan(&Nomor)
 	switch Nomor {
@@ -58,6 +59,8 @@ func menu() {
 		cariOlahraga(P, N)
 	case 7:
 		cariTanggal(P, N)
+	case 8:
+		sortKalori(P, N)
 	default:
 		stop = true
 	}
@@ -194,11 +197,7 @@ func hapusData(w *workout, n *int) {
 	fmt.Print("Pilih data hari ke- berapa yang ingin dihapus: ")
 	fmt.Scan(&idx)
 	for i := idx; i < *n; i++ {
-		(*w)[i].hariKe = (*w)[i+1].hariKe
-		(*w)[i].tanggal = (*w)[i+1].tanggal
-		(*w)[i].jenis = (*w)[i+1].jenis
-		(*w)[i].kalori = (*w)[i+1].kalori
-		(*w)[i].durasi = (*w)[i+1].durasi
+		w[i] = w[i + 1]
 	}
 	*n -= 1
 
@@ -221,8 +220,25 @@ func rekomendasi(w workout, n int){
 	}
 }
 
-// buat sekarang gini dlu aja na
-// tinggal nunggu sorting
-
-//oke, makasih frann.....
-// okee naa tengkyu jugaa
+func sortKalori(A workout, n int){
+	var i, idx, pass int
+	var temp workout
+	
+	pass = 2
+	for pass < n{
+		idx = pass - 1
+		i = pass
+		for i < n{
+			if A[i].kalori > A[idx].kalori{
+				idx = i
+			}
+			i += 1
+		}
+		temp[0] = A[pass - 1]
+		A[pass - 1] = A[idx]
+		A[idx] = temp[0]
+		pass += 1
+	}
+	fmt.Println("Data terurut dari kalori terbesar sampai terendah: ")
+	showData(A, N)
+}
