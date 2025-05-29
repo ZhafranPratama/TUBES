@@ -22,11 +22,12 @@ var hari int
 func main() {
 	N = 1
 	hari = N
-	for !stop {
+	for !stop { // bila user tidak memilih exit maka menu akan terus ditampilkan
 		menu()
 	}
 }
 
+// prosedur untuk menampilkan menu
 func menu() {
 	var Nomor int
 
@@ -34,39 +35,43 @@ func menu() {
 	fmt.Println("    Menu")
 	fmt.Println("-------------")
 	fmt.Println("1. Menambahkan data")
-	fmt.Println("2. Laporan")
-	fmt.Println("3. Edit data")
-	fmt.Println("4. Hapus data")
-	fmt.Println("5. Rekomendasi workout")
-	fmt.Println("6. Cari workout berdasarkan jenis")
-	fmt.Println("7. Cari workout berdasarkan tanggal")
-	fmt.Println("8. Urutkan berdasarkan jumlah kalori")
-	fmt.Println("9. Exit")
-	fmt.Print("Pilih menu 1/2/3/4/5...: ")
+	fmt.Println("2. Edit data")
+	fmt.Println("3. Hapus data")
+	fmt.Println("4. Rekomendasi workout")
+	fmt.Println("5. Cari workout berdasarkan jenis")
+	fmt.Println("6. Cari workout berdasarkan hari")
+	fmt.Println("7. Urutkan berdasarkan kalori")
+	fmt.Println("8. Urutkan berdasarkan durasi")
+	fmt.Println("9. Laporan")
+	fmt.Println("10. Exit")
+	fmt.Print("Pilih menu 1-10: ")
 	fmt.Scan(&Nomor)
 	switch Nomor {
 	case 1:
 		addData(&P, &N)
 	case 2:
-		showData(P, N)
-	case 3:
 		editData(&P, N)
-	case 4:
+	case 3:
 		hapusData(&P, &N)
-	case 5:
+	case 4:
 		rekomendasi(P, N)
-	case 6:
+	case 5:
 		cariOlahraga(P, N)
+	case 6:
+		cariHari(P, N)
 	case 7:
-		cariTanggal(P, N)
-	case 8:
 		sortKalori(P, N)
+	case 8:
+		sortDurasi(P, N)
+	case 9:
+		showData(P, N)
 	default:
-		stop = true
+		stop = true // membuat nilai stop menjadi true sehingga menu akan berhenti ditampilkan
 	}
 
 }
 
+// prosedur untuk menambahkan data kedalam array
 func addData(w *workout, n *int) {
 	var pilih int = 1
 
@@ -94,51 +99,55 @@ func addData(w *workout, n *int) {
 	}
 }
 
+// prosedur untuk mencari olahraga menggunakan sequential search
 func cariOlahraga(w workout, n int) {
 	var x string
 	fmt.Print("Jenis olahraga yang ingin dicari: ")
 	fmt.Scan(&x)
-	fmt.Printf("| %-7s | %-10s | %-8s | %-7s | %-7s |\n", "Hari ke-", "Tanggal", "Latihan", "Durasi", "Kalori")
+	fmt.Printf("| %-5s | %-9s | %-20s | %-7s | %-7s |\n", "Hari ke-", "Tanggal", "Latihan", "Durasi", "Kalori")
 	for i := 0; i < n; i++ {
-		if w[i].jenis == x {
-			fmt.Printf("| %-7d | %-10s | %-8s | %-7d | %-7d |\n", w[i].hariKe, w[i].tanggal, w[i].jenis, w[i].durasi, w[i].kalori)
+		if w[i].jenis == x { // bila olahraga yang dicari tersedia maka data akan ditampilkan
+			fmt.Printf("| %-6d | %-9s | %-20s | %-7d | %-7d |\n", w[i].hariKe, w[i].tanggal, w[i].jenis, w[i].durasi, w[i].kalori)
+		} else {
+			fmt.Println("")
 		}
 	}
 }
 
-func cariTanggal(w workout, n int) {
+// prosedur untuk mencari workout hari ke- menggunakan binary search
+func cariHari(w workout, n int) {
 	var left, right, mid, idx int
-	var tanggal string
+	var hari int
 	left = 0
 	right = n - 1
 	idx = -1
-	fmt.Print("Cari tanggal workout (DDMMYYYY): ")
-	fmt.Scan(&tanggal)
+	fmt.Print("Cari workout hari ke-: ")
+	fmt.Scan(&hari)
 	for (left <= right) && (idx == -1){
 		mid = (left + right) / 2
-		if tanggal < w[mid].tanggal{
+		if hari < w[mid].hariKe{
 			right = mid - 1
-		}else if tanggal > w[mid].tanggal{
+		}else if hari > w[mid].hariKe{
 			left = mid + 1
 		}else{
 			idx = mid
 		}
 	}
-	if idx == -1 {
+	if idx == -1 { 
 		fmt.Println("Data tidak ditemukan!")
-	}else{
-		fmt.Printf("| %-7s | %-10s | %-8s | %-7s | %-7s |\n", "Hari ke-", "Tanggal", "Latihan", "Durasi", "Kalori")
-		fmt.Printf("| %-7d | %-10s | %-8s | %-7d | %-7d |\n", w[idx].hariKe, w[idx].tanggal, w[idx].jenis, w[idx].durasi, w[idx].kalori)
+	}else{ // menampilkan data bila data yang dicari tersedia
+		fmt.Printf("| %-6s | %-9s | %-20s | %-7s | %-7s |\n", "Hari ke-", "Tanggal", "Latihan", "Durasi", "Kalori")
+		fmt.Printf("| %-6d | %-9s | %-20s | %-7d | %-7d |\n", w[idx].hariKe, w[idx].tanggal, w[idx].jenis, w[idx].durasi, w[idx].kalori)
 	}
 }
 
 
-
+// prosedur untuk menampilkan data 
 func showData(w workout, n int) {
 	var total int
-	fmt.Printf("| %-7s | %-10s | %-8s | %-7s | %-7s |\n", "Hari ke-", "Tanggal", "Latihan", "Durasi", "Kalori")
+	fmt.Printf("| %-6s | %-9s | %-20s | %-7s | %-7s |\n", "Hari ke-", "Tanggal", "Latihan", "Durasi", "Kalori")
 	for i := 1; i < n; i++ {
-		fmt.Printf("| %-7d | %-10s | %-8s | %-7d | %-7d |\n", w[i].hariKe, w[i].tanggal, w[i].jenis, w[i].durasi, w[i].kalori)
+		fmt.Printf("| %-6d | %-9s | %-20s | %-7d | %-7d |\n", w[i].hariKe, w[i].tanggal, w[i].jenis, w[i].durasi, w[i].kalori)
 	}
 	//total kalori
 	for j:=1; j<n; j++ {
@@ -147,13 +156,14 @@ func showData(w workout, n int) {
 	fmt.Printf("Total kalori keseluruhan: %d\n", total)
 }
 
+// prosedur untuk mengubah data sesuai keinginan user
 func editData(w *workout, n int) {
 	var idx, pilihan, edit int
 	showData(*w, n)
 	fmt.Print("Pilih data hari ke- berapa yang ingin diedit: ")
 	fmt.Scan(&idx)
-	fmt.Printf("| %-7s | %-10s | %-8s | %-7s | %-7s |\n", "Hari ke-", "Tanggal", "Latihan", "Durasi", "Kalori")
-	fmt.Printf("| %-7d | %-10s | %-8s | %-7d | %-7d |\n", w[idx].hariKe, w[idx].tanggal, w[idx].jenis, w[idx].durasi, w[idx].kalori)
+	fmt.Printf("| %-6s | %-9s | %-20s | %-7s | %-7s |\n", "Hari ke-", "Tanggal", "Latihan", "Durasi", "Kalori")
+	fmt.Printf("| %-6d | %-9s | %-20s | %-7d | %-7d |\n", w[idx].hariKe, w[idx].tanggal, w[idx].jenis, w[idx].durasi, w[idx].kalori)
 	fmt.Print("pilih 1 untuk edit keseluruhan, 0 untuk edit sebagian: ")
 	fmt.Scan(&edit)
 	if edit == 1 {
@@ -191,23 +201,25 @@ func editData(w *workout, n int) {
 	}
 }
 
+// prosedur untuk menghapus data yang diinginkan user
 func hapusData(w *workout, n *int) {
 	var idx int
 	showData(*w, *n)
 	fmt.Print("Pilih data hari ke- berapa yang ingin dihapus: ")
 	fmt.Scan(&idx)
 	for i := idx; i < *n; i++ {
-		w[i] = w[i + 1]
+		w[i] = w[i + 1] // menimpa data yang dihapus dengan data selanjutnya
 	}
-	*n -= 1
+	*n -= 1 // mengurangi jumlah data yang ada di dalam array
 
 }
 
+// memberi rekomendasi workout kepada user berdasarkan 3 workout terakhir
 func rekomendasi(w workout, n int){
 	var count int
 	fmt.Println("Rekomendasi workout berdasarkan 3 workout terakhir: ")
 	count = 1
-	if n > 3{
+	if n > 3{ // mengecek apakah data yang tersedia lebih dari 3
 		for i := n - 3; i < n; i++{
 			fmt.Printf("%d. %s\n",count, w[i].jenis)
 			count++
@@ -220,6 +232,7 @@ func rekomendasi(w workout, n int){
 	}
 }
 
+// prosedur untuk mengurutkan kalori menggunakan selection sort secara descending
 func sortKalori(A workout, n int){
 	var i, idx, pass int
 	var temp workout
@@ -240,5 +253,24 @@ func sortKalori(A workout, n int){
 		pass += 1
 	}
 	fmt.Println("Data terurut dari kalori terbesar sampai terendah: ")
-	showData(A, N)
+	showData(A, N) // memberikan output data yang sudah terurut
+}
+
+// prosedur untuk mengurutkan data dengan insertion sort secara ascending berdasarkan durasi
+func sortDurasi(A workout, n int)  {
+	var pass, i int
+	var temp pengguna
+	pass = 2
+	for pass <= n-1 {
+		i = pass
+		temp = A[pass]
+		for i > 1 && temp.durasi < A[i - 1].durasi {
+			A[i] = A[i - 1]
+ 			i--
+		}
+		A[i] = temp
+		pass++
+	}
+	fmt.Println("Data terurut dari durasi workout paling cepat hingga paling lama: ")
+	showData(A, n) // menampilkan data yang sudah terurut
 }
